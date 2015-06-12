@@ -258,7 +258,11 @@ module Cucumber
                         end
 
                         div class: "panel-body" do
-                          div endpoint.description
+                          div do
+                            endpoint.description.split(/\n/).each do |line|
+                              div line
+                            end
+                          end
 
                           h3 "Parameters"
 

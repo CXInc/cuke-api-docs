@@ -123,7 +123,7 @@ module Cucumber
             @example.code = matches[1]
           elsif matches = step.name.match(/Content-Type is (.*)$/)
             @example.content_type = matches[1]
-          elsif matches = step.name.match(/the JSON response at "(.*?)" should include (keys)*:/)
+          elsif matches = step.name.match(/the JSON response at "(.*?)" should include( keys)*:/)
             key = matches[1]
 
             if step.multiline_arg.respond_to? :rows
@@ -171,6 +171,12 @@ module Cucumber
           end
 
           value = case key_two
+          when keys.last
+            if current[key_one].is_a?(Hash)
+              current[key_one].merge(key_two => terminal_value)
+            else
+              {key_two => terminal_value}
+            end
           when /^\d+$/
             if current[key_one].is_a?(Array)
               current[key_one]
@@ -178,11 +184,7 @@ module Cucumber
               []
             end
           else
-            if current[key_one].is_a?(Hash)
-              current[key_one].merge(key_two => terminal_value)
-            else
-              {key_two => terminal_value}
-            end
+            current[key_one] || {}
           end
 
           current[key_one] = value
